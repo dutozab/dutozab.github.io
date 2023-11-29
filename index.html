@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      
+    }
+  </style>
+</head>
+<body bgcolor="red">
+<script>
+function sleep(ms) {
+return new Promise(resolve => setTimeout(resolve, ms));
+}
+    //const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+    async function async(){
+    for(let j=0; j > -1; j++){
+    let t = Math.floor(Math.abs(Math.sin(j/7))  * 16777216);
+    s = t.toString(16);
+    document.bgColor = s;
+    console.log(s);
+    await sleep(1*64);
+    }
+    }
+async();
+</script>
+</body>
+</html>
