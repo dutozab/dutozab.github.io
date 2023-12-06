@@ -112,6 +112,10 @@ h2 {
 	font-weight: bold;
 }
 .side {
+	background-color:#ff838b;
+  	width:100px;
+  	height:300px;
+  	text-align:center;
 	padding: 0 0 10px 0;
 }
 .side ul {
@@ -321,5 +325,15 @@ footer {
   font-size: 16px;
   margin-top: 10px;
   padding: 0 0 10px 0;
+}
+.content {
+  background-color:#b3d874;
+  width:250px;
+  height:300px;
+  text-align:center;
+  margin-left:10px;
+}
+article {
+  display:flex;
 }
 }
