@@ -4,6 +4,7 @@ body {
 	padding: 0;
 }
 .glow_banner {
+	text-align: center;
 	background: #1e3971;
 	background: -moz-linear-gradient(top, #091938, #1e3971);
 	background: -webkit-gradient(linear,
@@ -20,7 +21,7 @@ body {
 	margin: 0 auto;
 	padding: 10px;
 	text-shadow: 0 0 15px #ffdd65, 0 0 10px #ffdd65,0 0 5px #fff;
-	width: 250px;
+	width: 450px;
   }
   
   .glow_banner .catch {
