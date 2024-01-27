@@ -51,6 +51,10 @@ main {
 }
 #inner {
 	padding: 16px 30px;
+	 color: #ffffff;
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
+  text-shadow: 0 0 5px #ffffff, 0 0 20px #000, 0 0 30px #000;
 }
 aside {
 	margin: 0 auto;
