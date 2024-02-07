@@ -392,8 +392,8 @@ article {
   --fontSize: 60px;
   --lineHeight: 80px;
   width: auto;
-  height: calc(2 * var(--lineHeight));
-  line-height: var(--lineHeight);
+  height: calc(4 * var(--lineHeight));
+  line-height: calc(2*var(--lineHeight));
   margin: calc(50vh - var(--lineHeight)) auto 0;
   font-size: var(--fontSize);
   text-transform: uppercase;
