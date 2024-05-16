@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2024年度前期 金曜日メンバー募集</title>
+  <meta name="description" content="説明文">
+  <meta name="keywords" content="キーワード">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="..\index.css">
+</head>
+<body bgcolor="red">
+  <div id="outer">
+    <header>
+    <div id="logo"><h1>プログラミング研究会</h1></div>
+    </header>
+    <div id="content">
+    <main>
+    <div id="inner" style="padding: 10px; margin-bottom: 10px; border: 5px double #333333;">
+    <h2>2024年度前期 金曜日メンバー募集</h2>
+    <p>我々プログラミング研究会は現在水曜日のみ活動していますが金曜日の4限の時間にも活動したいと考えています。
+そこで金曜日の活動に参加してくれるメンバーを募集しています。
+      興味があればdiscordのほうで連絡してください。
+    </p>
+    </div></main>
+    <!-- <aside>
+    <div id="aside-inner">
+    <nav id="left">
+    <div class="title">menu</div>
+    <div class="side">
+    <ul>
+    <li>記事ページへのリンク</li>
+    <li>記事ページへのリンク</li>
+    </ul>
+    </div>
+    </nav>
+    <nav id="right">
+    <div class="title">menu</div>
+    <div class="side">
+    <ul>
+    <li>記事ページへのリンク</li>
+    <li>記事ページへのリンク</li>
+    </ul>
+    </div>
+    </nav>
+    </div>
+    </aside>
+    </div> -->
+    <footer>Powered by プログラミング研究会 2024 </footer>
+    </div>
+<script>
+function sleep(ms) {
+return new Promise(resolve => setTimeout(resolve, ms));
+}
+    //const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+    async function async(){
+    for(let j=0; j > -1; j++){
+    let t = Math.floor(Math.abs(Math.sin(j/7))  * 16777216);
+    s = t.toString(16);
+    document.bgColor = s;
+    console.log(s);
+    await sleep(1*64);
+    }
+    }
+    if (window.confirm("虹色モードにしますか?")) {
+  async();
+}
+</script>
+</body>
+</html>
