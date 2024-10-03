@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>おしゃれなデザイン</title>
+    <style>
+        /* 全体レイアウト */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            width: 90%;
+            max-width: 1200px;
+            padding: 20px;
+        }
+
+        /* カードスタイル */
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 15px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .card-description {
+            font-size: 1rem;
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        .card-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .card-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <img src="https://via.placeholder.com/300x200" alt="Image 1">
+            <div class="card-content">
+                <h2 class="card-title">愛知県大学対抗ハッカソンに出場しました</h2>
+                <p class="card-description">大同大学学部2年2名修士1年1名愛知淑徳大学学部2年1名計4名の混合チームで参加しました。<br>2週間で開発するのはなかなか大変でしたがみんなで協力して何とか形にすることができたので参加してくれた3人には感謝してます。また機会があれば一緒に開発などできたらうれしいです。</p>
+                <button class="card-button" onclick="alert('ボタンがクリックされました！')">いいね！</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://via.placeholder.com/300x200" alt="Image 2">
+            <div class="card-content">
+                <h2 class="card-title">最終プレゼンテーション</h2>
+                <p class="card-description">最終プレゼンテーションではどのチームも素晴らしい成果物を発表していたのでとても良い経験になったと思います。<br>最終プレゼンテーションの様子はこちらです。</p>
+                <button class="card-button" onclick="loction.href='https://youtu.be/La18OzzH-iA?t=8222'">詳細を見る</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://via.placeholder.com/300x200" alt="Image 3">
+            <div class="card-content">
+                <h2 class="card-title">制作物について</h2>
+                <p class="card-description">デモの動画が準備できたらいいなと思います</p>
+                <button class="card-button" onclick="alert('ボタンがクリックされました！')">準備中</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
