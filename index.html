@@ -2,103 +2,190 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <title>大同大学　プログラミング研究会</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>大同大学 サークル・部活動一覧</title>
-  <meta name="description" content="説明文">
-  <meta name="keywords" content="キーワード">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://dutozab.github.io/index.css">
-</head>
-<body bgcolor="blue">
-  <div id="outer">
-    <header>
-    <div class="glow_banner">
-    <span class="catch">★ 大同大学 ★</span>
-    サークル・部活動一覧
-    </div>
-    </header>
-  </div>
-    <article>
-    <div class="side">
-      <b><font color="red">キリ番踏み逃げ禁止です！！</font color></b>
-    <!-- FC2カウンター ここから -->
-    <script language="javascript" type="text/javascript" src="//counter1.fc2.com/counter.php?id=39395423&main=1"></script><noscript><img src="//counter1.fc2.com/counter_img.php?id=39395423&main=1" /></noscript>
-    <!-- FC2カウンター ここまで -->
-    </div>
-    <div id="content">
-    <main>
-    <div id="inner" style="padding: 10px; margin-bottom: 10px; border: 5px double #333333;">
-    <ul>
-    <li><font size="30"><a href="osirase\wdu2025.html">[最新版]プログラミング研究会活動について</font></li>
-    <li><a href="osirase\hackathon2025.html">2025年ハッカソン出場</a></li>
-    <li><a href="syoukai\pken.html">プログラミング研究会</a></li>
-    <li><a href="osirase\mahjong.html">[お知らせ]麻雀部門設立！</a></li>
-    <li><a href="osirase\binyouki.html">[お知らせ]2024年度前期 金曜日活動メンバー募集</a></li>
-    <li><a href="osirase\binyouki2.html">[お知らせ]2024年度前期 金曜日サークル活動開始</a></li>
-    <li><a href="osirase\hakkason.html">[お知らせ]2024年愛知県大学対抗ハッカソン出場決定</a></li>
-    <li><a href="osirase\hackaichi.html">[お知らせ]2024年愛知県大学対抗ハッカソン結果</a></li>
-    </ul>
-    </div></main><div id="app">
-    <div id="hero"></div></div></article>
-    <!-- <aside>
-    <div id="aside-inner">
-    <nav id="left">
-    <div class="title">menu</div>
-    <div class="side">
-    <ul>
-    <li>記事ページへのリンク</li>
-    <li>記事ページへのリンク</li>
-    </ul>
-    </div>
-    </nav>
-    <nav id="right">
-    <div class="title">menu</div>
-    <div class="side">
-    <ul>
-    <li>記事ページへのリンク</li>
-    <li>記事ページへのリンク</li>
-    </ul>
-    </div>
-    </nav>
-    </div>
-    </aside>
-    </div> -->
-    <footer>Powered by プログラミング研究会 2023 </footer>
-  </div>
-<!--<script type="module">
-  import { neonCursor } from 'https://unpkg.com/threejs-toys@0.0.8/build/threejs-toys.module.cdn.min.js'
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: white;
+      font-family: 'Orbitron', sans-serif;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-neonCursor({
-  el: document.getElementById('app'),
-  shaderPoints: 16,
-  curvePoints: 80,
-  curveLerp: 0.5,
-  radius1: 5,
-  radius2: 30,
-  velocityTreshold: 10,
-  sleepRadiusX: 100,
-  sleepRadiusY: 100,
-  sleepTimeCoefX: 0.0025,
-  sleepTimeCoefY: 0.0025
-})
-</script>!-->
-<script>
-function sleep(ms) {
-return new Promise(resolve => setTimeout(resolve, ms));
-}
-    //const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-    async function async(){
-    for(let j=0; j > -1; j++){
-    let t = Math.floor(Math.abs(Math.sin(j/7))  * 16777216);
-    s = t.toString(16);
-    document.bgColor = s;
-    console.log(s);
-    await sleep(1*64);
+    .container {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      padding: 2vw 4vw;
+      padding-left: 10vw;
     }
+
+    .spheres-wrapper {
+      width: min(40vw, 400px);
+      height: min(40vw, 400px);
+      perspective: 1000px;
+      flex-shrink: 0;
+      margin-left: 2vw;
     }
-    if (window.confirm("虹色モードにしますか?")) {
-  async();
-}
-</script>
+
+    .spheres {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+    }
+
+    .sphere {
+      position: absolute;
+      width: 1.6vw;
+      height: 1.6vw;
+      max-width: 20px;
+      max-height: 20px;
+      background: #8cf;
+      border-radius: 50%;
+      box-shadow: 0 0 12px #8cf;
+      transition: transform 0.1s, opacity 0.1s;
+    }
+
+    .news {
+      position: absolute;
+      top: 50%;
+      right: 3vw;
+      transform: translateY(-50%);
+      max-width: 600px;
+      text-align: left;
+      padding: 0;
+      margin: 0;
+      background: none;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    .news h2,
+    .news li,
+    .news li a {
+      color: #8cf;
+      text-shadow: 0 0 5px #8cf;
+      font-size: 1.4em;
+      text-decoration: none;
+      margin-bottom: 0.5em;
+      display: block;
+    }
+
+    .news li a:hover {
+      color: #fff;
+      text-shadow: 0 0 10px #fff;
+    }
+
+    .news h2 {
+      font-size: 1.6em;
+      margin-bottom: 0.5em;
+    }
+
+    .news ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    @media (max-width: 768px) {
+      .news {
+        position: static;
+        transform: none;
+        margin-top: 3em;
+        text-align: center;
+      }
+      .sphere {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="spheres-wrapper">
+      <div class="spheres" id="spheres"></div>
+    </div>
+  </div>
+
+  <div class="news">
+    <h2>お知らせ</h2>
+    <ul>
+      <li><a href="osirase\wdu2025.html">[最新版]プログラミング研究会活動について</a></li>
+        <li><a href="osirase\hackathon2025.html">2025年ハッカソン出場</a></li>
+        <li><a href="syoukai\pken.html">プログラミング研究会</a></li>
+        <li><a href="osirase\mahjong.html">[お知らせ]麻雀部門設立！</a></li>
+        <li><a href="osirase\binyouki.html">[お知らせ]2024年度前期 金曜日活動メンバー募集</a></li>
+        <li><a href="osirase\binyouki2.html">[お知らせ]2024年度前期 金曜日サークル活動開始</a></li>
+        <li><a href="osirase\hakkason.html">[お知らせ]2024年愛知県大学対抗ハッカソン出場決定</a></li>
+        <li><a href="osirase\hackaichi.html">[お知らせ]2024年愛知県大学対抗ハッカソン結果</a></li>
+    </ul>
+  </div>
+
+  <script>
+    const sphereContainer = document.getElementById('spheres');
+    const count = 7;
+    const radius = Math.min(window.innerWidth, 400) / 2;
+    const spheres = [];
+
+    for (let i = 0; i < count; i++) {
+      const sphere = document.createElement('div');
+      sphere.className = 'sphere';
+      sphereContainer.appendChild(sphere);
+      spheres.push(sphere);
+    }
+
+    let angle = 0;
+    let rotX = 0, rotY = 0;
+
+    function animate() {
+      angle += 0.02;
+      rotX += 0.003;
+      rotY += 0.004;
+
+      const points = [];
+
+      for (let i = 0; i < count; i++) {
+        const theta = angle + i * (2 * Math.PI / count);
+        let x = radius * Math.cos(theta);
+        let y = radius * Math.sin(theta);
+        let z = 0;
+
+        let y1 = y * Math.cos(rotX) - z * Math.sin(rotX);
+        let z1 = y * Math.sin(rotX) + z * Math.cos(rotX);
+        y = y1; z = z1;
+
+        let x1 = x * Math.cos(rotY) + z * Math.sin(rotY);
+        z1 = -x * Math.sin(rotY) + z * Math.cos(rotY);
+        x = x1; z = z1;
+
+        points.push({ x, y, z });
+      }
+
+      for (let i = 0; i < count; i++) {
+        const p = points[i];
+        const scale = (p.z + 200) / 300;
+        const opacity = (p.z + 200) / 400;
+        spheres[i].style.transform = `
+          translate3d(${p.x + 150 - 8}px, ${p.y + 150 - 8}px, 0)
+          scale(${scale})
+        `;
+        spheres[i].style.opacity = opacity;
+        spheres[i].style.zIndex = Math.round(p.z);
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
 </body>
 </html>
