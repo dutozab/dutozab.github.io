@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>Cyber Shooter EX</title>
+  <style>
+    html,body{margin:0;padding:0;background:#000;overflow:hidden;font-family:monospace;}
+    canvas{display:block;width:100vw;height:100vh;}
+    #ui{position:fixed;top:10px;left:10px;font-size:18px;pointer-events:none;color:#0ff;text-shadow:0 0 6px #0ff;}
+    #power{margin-top:6px;color:#ff0;text-shadow:0 0 6px #ff0;}
+    #logo{position: fixed;top: 20px;left: 50%;transform: translateX(-50%);z-index: 1;pointer-events: none;opacity: 0.25;max-width: 60%;}
+  </style>
+</head>
+<body>
+  <img id="logo" src="sozai/logo.png" alt="P研シューティングロゴ">
+  <canvas id="game"></canvas>
+  <div id="ui">SCORE: <span id="score">0</span><br>POWER: <span id="power">SINGLE</span></div>
+
+  <script>
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  const audioCtx = new AudioContext();
+  let audioUnlocked=false;
+  function unlockAudio(){if(!audioUnlocked){audioCtx.resume();audioUnlocked=true;}}
+  function beep(freq,duration,volume=0.2,type='square'){
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.frequency.value=freq;
+    osc.type=type;
+    gain.gain.value=volume;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime+duration);
+  }
+  function playShoot(){beep(1200,0.07,0.15,'sawtooth');}
+  function playExplosion(){beep(200,0.4,0.35,'square');}
+
+  const canvas=document.getElementById('game');
+  const ctx=canvas.getContext('2d');
+  function resize(){canvas.width=innerWidth;canvas.height=innerHeight;}
+  addEventListener('resize',resize);resize();
+
+  class Particle{
+    constructor(x,y){
+      this.x=x;this.y=y;
+      this.vx=(Math.random()-0.5)*6;
+      this.vy=(Math.random()-0.5)*6;
+      this.life=30;
+      this.size=2+Math.random()*3;
+      this.hue=Math.random()*360;
+    }
+    update(){this.x+=this.vx;this.y+=this.vy;this.vy+=0.05;this.life--;}
+    draw(){ctx.save();ctx.fillStyle=`hsla(${this.hue},100%,60%,${this.life/30})`;ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill();ctx.restore();}
+    dead(){return this.life<=0;}
+  }
+
+  class Grid{
+    constructor(){this.offset=0;}
+    draw(){
+      const size=40;this.offset+=0.4;
+      ctx.save();ctx.strokeStyle='rgba(0,255,255,0.12)';ctx.lineWidth=1;
+      for(let x=0;x<canvas.width;x+=size){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke();}
+      for(let y=-size+this.offset%size;y<canvas.height;y+=size){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke();}
+      ctx.restore();
+    }
+  }
+
+  class Player{
+    constructor(){
+      this.x=canvas.width/2;this.y=canvas.height-60;
+      this.size=20;this.speed=5;this.cool=0;
+      this.weapon=0;
+    }
+    fire(){
+      if(this.cool>0)return;this.cool=10;
+      if(this.weapon===0){bullets.push(new Bullet(this.x,this.y-this.size,0));}
+      else if(this.weapon===1){bullets.push(new Bullet(this.x-8,this.y-this.size,0));bullets.push(new Bullet(this.x+8,this.y-this.size,0));}
+      else if(this.weapon===2){bullets.push(new Bullet(this.x,this.y-this.size,-0.3));bullets.push(new Bullet(this.x,this.y-this.size,0));bullets.push(new Bullet(this.x,this.y-this.size,0.3));}
+      playShoot();
+    }
+    update(){
+      if(keys['ArrowLeft']||keys['a'])this.x-=this.speed;
+      if(keys['ArrowRight']||keys['d'])this.x+=this.speed;
+      if(keys['ArrowUp']||keys['w'])this.y-=this.speed;
+      if(keys['ArrowDown']||keys['s'])this.y+=this.speed;
+      this.x=Math.max(this.size,Math.min(canvas.width-this.size,this.x));
+      this.y=Math.max(this.size,Math.min(canvas.height-this.size,this.y));
+      if(this.cool>0)this.cool--;
+      if(keys[' ']||keys['Space'])this.fire();
+    }
+    draw(){ctx.save();ctx.translate(this.x,this.y);ctx.fillStyle='#0ff';ctx.shadowColor='#0ff';ctx.shadowBlur=18;ctx.beginPath();ctx.moveTo(0,-this.size);ctx.lineTo(this.size,this.size);ctx.lineTo(-this.size,this.size);ctx.closePath();ctx.fill();ctx.restore();}
+  }
+
+  class Bullet{
+    constructor(x,y,angle){this.x=x;this.y=y;this.size=4;this.speed=9;this.angle=angle;}
+    update(){this.x+=Math.sin(this.angle)*this.speed;this.y-=Math.cos(this.angle)*this.speed;}
+    draw(){ctx.save();ctx.fillStyle='#fff';ctx.shadowColor='#0ff';ctx.shadowBlur=12;ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill();ctx.restore();}
+    offscreen(){return this.y<-10||this.x<-10||this.x>canvas.width+10;}
+  }
+
+  class Enemy{
+    constructor(type){
+      this.type=type;
+      this.size=type===3?30:20;
+      this.x=Math.random()*(canvas.width-2*this.size)+this.size;
+      this.y=-this.size;
+      this.frame=0;
+      this.health=type===3?3:1;
+      this.baseSpeed=1.5+Math.random()*1.5;
+    }
+    update(){
+      this.frame++;
+      if(this.type===0){this.y+=this.baseSpeed;}
+      else if(this.type===1){this.y+=this.baseSpeed;this.x+=Math.sin(this.frame*0.1)*3;}
+      else if(this.type===2){this.y+=this.baseSpeed*2.2;}
+      else if(this.type===3){this.y+=this.baseSpeed*0.8;this.x+=Math.sin(this.frame*0.05)*4;}
+    }
+    draw(){
+      ctx.save();
+      const color=['#ff007c','#ff8400','#ff0','#ff00ff'][this.type]||'#ff007c';
+      ctx.strokeStyle=color;ctx.lineWidth=3;ctx.shadowColor=color;ctx.shadowBlur=15;
+      if(this.type===3){ctx.fillStyle='rgba(255,0,0,0.15)';ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill();}
+      ctx.beginPath();ctx.rect(this.x-this.size,this.y-this.size,this.size*2,this.size*2);ctx.stroke();
+      ctx.restore();
+    }
+    hit(){this.health--;return this.health<=0;}
+    offscreen(){return this.y>canvas.height+this.size;}
+  }
+
+  class PowerUp{
+    constructor(x,y){this.x=x;this.y=y;this.size=12;this.speed=2;this.angle=0;}
+    update(){this.y+=this.speed;this.angle+=0.2;}
+    draw(){ctx.save();ctx.translate(this.x,this.y);ctx.rotate(this.angle);ctx.strokeStyle='#ff0';ctx.lineWidth=3;ctx.shadowColor='#ff0';ctx.shadowBlur=10;ctx.beginPath();ctx.rect(-this.size/2,-this.size/2,this.size,this.size);ctx.stroke();ctx.restore();}
+    offscreen(){return this.y>canvas.height+this.size;}
+  }
+
+  const grid=new Grid();
+  const player=new Player();
+  const bullets=[];const enemies=[];const particles=[];const powerUps=[];
+  let frames=0;let score=0;
+
+  const keys={};
+  addEventListener('keydown',e=>{keys[e.key]=true;unlockAudio();});
+  addEventListener('keyup',e=>keys[e.key]=false);
+
+  function collide(a,b){return Math.hypot(a.x-b.x,a.y-b.y)<a.size+b.size;}
+
+  function spawnEnemy(){
+    const r=Math.random();
+    let t=0;
+    if(r>0.8)t=3;else if(r>0.6)t=2;else if(r>0.3)t=1;
+    enemies.push(new Enemy(t));
+  }
+
+  function updateScore(){document.getElementById('score').textContent=score;}
+  function updatePower(){document.getElementById('power').textContent=['SINGLE','DOUBLE','SPREAD'][player.weapon];}
+
+  function gameOver(){alert(`GAME OVER\nScore: ${score}`);location.reload();}
+
+  function loop(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    grid.draw();
+
+    player.update();player.draw();
+
+    if(frames%50===0)spawnEnemy();
+
+    for(let i=bullets.length-1;i>=0;i--){
+      const b=bullets[i];b.update();b.draw();if(b.offscreen())bullets.splice(i,1);
+    }
+
+    for(let i=enemies.length-1;i>=0;i--){
+      const e=enemies[i];e.update();e.draw();
+      if(e.offscreen()){enemies.splice(i,1);continue;}
+      if(collide(player,e))return gameOver();
+      for(let j=bullets.length-1;j>=0;j--){
+        const bl=bullets[j];
+        if(collide(e,{x:bl.x,y:bl.y,size:bl.size})){
+          bullets.splice(j,1);
+          if(e.hit()){
+            playExplosion();
+            for(let k=0;k<20;k++)particles.push(new Particle(e.x,e.y));
+            if(Math.random()<0.3)powerUps.push(new PowerUp(e.x,e.y));
+            enemies.splice(i,1);
+            score+=100;updateScore();
+          }
+          break;
+        }
+      }
+    }
+
+    for(let i=powerUps.length-1;i>=0;i--){
+      const p=powerUps[i];p.update();p.draw();
+      if(collide(player,p)){powerUps.splice(i,1);if(player.weapon<2)player.weapon++;updatePower();continue;}
+      if(p.offscreen())powerUps.splice(i,1);
+    }
+
+    for(let i=particles.length-1;i>=0;i--){const pr=particles[i];pr.update();pr.draw();if(pr.dead())particles.splice(i,1);}  
+
+    frames++;requestAnimationFrame(loop);
+  }
+
+  loop();
+  </script>
+</body>
+</html>
