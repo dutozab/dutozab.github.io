@@ -106,6 +106,30 @@
         width: 16px;
         height: 16px;
       }
+      .game-button {
+      font-size: 1em;
+      padding: 10px 16px;
+      }
+    }
+    .game-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #0ff;
+    color: black;
+    font-weight: bold;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1.2em;
+    box-shadow: 0 0 15px #0ff;
+    transition: all 0.2s ease-in-out;
+    z-index: 10;
+    }
+    .game-button:hover {
+    background: #fff;
+    box-shadow: 0 0 20px #fff;
+    color: #000;
     }
   </style>
 </head>
@@ -187,5 +211,6 @@
 
     animate();
   </script>
+  <a href="game/pken_shooting.html" class="game-button">▶ P研シューティング</a>
 </body>
 </html>
