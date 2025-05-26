@@ -1,216 +1,243 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>大同大学　プログラミング研究会</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: black;
-      color: white;
-      font-family: 'Orbitron', sans-serif;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .container {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      width: 100%;
-      height: 100%;
-      padding: 2vw 4vw;
-      padding-left: 10vw;
-    }
-
-    .spheres-wrapper {
-      width: min(40vw, 400px);
-      height: min(40vw, 400px);
-      perspective: 1000px;
-      flex-shrink: 0;
-      margin-left: 2vw;
-    }
-
-    .spheres {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      transform-style: preserve-3d;
-    }
-
-    .sphere {
-      position: absolute;
-      width: 1.6vw;
-      height: 1.6vw;
-      max-width: 20px;
-      max-height: 20px;
-      background: #8cf;
-      border-radius: 50%;
-      box-shadow: 0 0 12px #8cf;
-      transition: transform 0.1s, opacity 0.1s;
-    }
-
-    .news {
-      position: absolute;
-      top: 50%;
-      right: 3vw;
-      transform: translateY(-50%);
-      max-width: 600px;
-      text-align: left;
-      padding: 0;
-      margin: 0;
-      background: none;
-      box-shadow: none;
-      backdrop-filter: none;
-    }
-
-    .news h2,
-    .news li,
-    .news li a {
-      color: #8cf;
-      text-shadow: 0 0 5px #8cf;
-      font-size: 1.4em;
-      text-decoration: none;
-      margin-bottom: 0.5em;
-      display: block;
-    }
-
-    .news li a:hover {
-      color: #fff;
-      text-shadow: 0 0 10px #fff;
-    }
-
-    .news h2 {
-      font-size: 1.6em;
-      margin-bottom: 0.5em;
-    }
-
-    .news ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    @media (max-width: 768px) {
-      .news {
-        position: static;
-        transform: none;
-        margin-top: 3em;
-        text-align: center;
-      }
-      .sphere {
-        width: 16px;
-        height: 16px;
-      }
-      .game-button {
-      font-size: 1em;
-      padding: 10px 16px;
-      }
-    }
-    .game-button {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #0ff;
-    color: black;
-    font-weight: bold;
-    padding: 12px 20px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 1.2em;
-    box-shadow: 0 0 15px #0ff;
-    transition: all 0.2s ease-in-out;
-    z-index: 10;
-    }
-    .game-button:hover {
-    background: #fff;
-    box-shadow: 0 0 20px #fff;
-    color: #000;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>大同大学 プログラミング研究会</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="color-scheme" content="dark light" />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --primary:#00eaff;
+  --secondary:#ff007a;
+  --bg1:#030014;
+  --bg2:#001021;
+}
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  font-family:"Orbitron","Share Tech Mono",monospace;
+  background:var(--bg1);
+  color:#e6faff;
+  overflow:hidden;
+}
+a{color:inherit;text-decoration:none;}
+body::before{
+  content:"";
+  position:fixed;
+  inset:-50%;
+  background:radial-gradient(circle at 30% 30%,var(--secondary)0%,transparent 70%),radial-gradient(circle at 70% 70%,var(--primary)0%,transparent 70%);
+  opacity:0.15;
+  animation:bgrotate 40s linear infinite;
+  z-index:-5;
+}
+@keyframes bgrotate{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background-image:linear-gradient(rgba(0,255,255,0.04)1px,transparent 1px),linear-gradient(90deg,rgba(0,255,255,0.04)1px,transparent 1px);
+  background-size:40px 40px;
+  z-index:-4;
+}
+.bg-diag{
+  position:fixed;
+  inset:0;
+  background-image:repeating-linear-gradient(135deg,transparent 0 6px,rgba(255,0,122,0.07)6px 12px);
+  mix-blend-mode:screen;
+  pointer-events:none;
+  z-index:-3;
+}
+.scanlines{
+  position:fixed;
+  inset:0;
+  background-image:repeating-linear-gradient(0deg,transparent 0 1px,rgba(0,0,0,0.2)1px 2px);
+  mix-blend-mode:overlay;
+  pointer-events:none;
+  z-index:-2;
+}
+.container{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  height:100%;
+  padding:clamp(16px,3vw,48px);
+  gap:clamp(24px,4vw,64px);
+}
+.spheres-wrapper{
+  width:clamp(220px,38vw,440px);
+  aspect-ratio:1/1;
+  perspective:1200px;
+  flex-shrink:0;
+}
+.spheres{
+  position:relative;
+  width:100%;
+  height:100%;
+  transform-style:preserve-3d;
+  filter:drop-shadow(0 0 16px var(--primary));
+}
+.sphere{
+  position:absolute;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:linear-gradient(145deg,var(--primary),#0980ff);
+  box-shadow:0 0 12px var(--primary),0 0 24px #0980ff;
+  transition:transform 0.1s,opacity 0.1s;
+}
+.news{
+  max-width:min(600px,80vw);
+  backdrop-filter:blur(6px);
+  padding:clamp(12px,2vw,24px);
+  border:1px solid var(--primary);
+  border-radius:12px;
+  box-shadow:0 0 12px var(--primary);
+  background:rgba(0,0,0,0.35);
+}
+.news h2{
+  font-size:clamp(1.6rem,2.5vw+0.5rem,2.4rem);
+  margin-top:0;
+  margin-bottom:0.6em;
+  position:relative;
+  color:var(--secondary);
+  animation:glitch 4s infinite linear alternate-reverse;
+}
+@keyframes glitch{
+  0%{text-shadow:2px 0 var(--primary),-2px 0 var(--secondary);} 
+  20%{text-shadow:-2px -2px var(--secondary),2px 2px var(--primary);} 
+  40%{text-shadow:2px 2px var(--secondary),-2px -2px var(--primary);} 
+  60%{text-shadow:-2px 2px var(--secondary),2px -2px var(--primary);} 
+  80%{text-shadow:0 0 10px var(--secondary),0 0 10px var(--primary);} 
+  100%{text-shadow:2px 0 var(--primary),-2px 0 var(--secondary);}
+}
+.news ul{list-style:none;padding:0;margin:0;}
+.news li{margin:0.4em 0;font-size:clamp(1rem,1.2vw+0.6rem,1.2rem);}
+.news a{
+  padding:0.2em 0.4em;
+  color:#9fe4ff;
+  border-bottom:1px solid transparent;
+  transition:all 0.2s ease;
+}
+.news a:hover{
+  color:#fff;
+  border-bottom:1px solid #fff;
+  text-shadow:0 0 8px #fff;
+}
+.game-button{
+  position:fixed;
+  bottom:clamp(20px,3vw,32px);
+  right:clamp(20px,3vw,32px);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:linear-gradient(135deg,var(--secondary)0%,var(--primary)100%);
+  color:#000;
+  font-size:clamp(1rem,1vw+0.6rem,1.2rem);
+  font-weight:bold;
+  padding:clamp(10px,1.2vw,14px) clamp(18px,2vw,24px);
+  border-radius:12px;
+  box-shadow:0 0 20px var(--primary);
+  transition:all 0.25s;
+  z-index:10;
+}
+.game-button::before{
+  content:"▶";
+  animation:pulse 1.6s infinite ease-in-out;
+}
+@keyframes pulse{
+  0%,100%{transform:translateX(0);}
+  50%{transform:translateX(5px);}
+}
+.game-button:hover{
+  transform:translateY(-2px) scale(1.03);
+  box-shadow:0 0 28px #fff;
+}
+@media(max-width:700px){
+  .container{
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+  .spheres-wrapper{width:60vw;}
+  .news{text-align:center;}
+}
+@media (screen and (orientation:portrait)){
+  body{
+    padding-top:constant(safe-area-inset-top);
+    padding-bottom:constant(safe-area-inset-bottom);
+  }
+}
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="spheres-wrapper">
-      <div class="spheres" id="spheres"></div>
-    </div>
+<div class="bg-diag"></div>
+<div class="scanlines"></div>
+<div class="container">
+  <div class="spheres-wrapper">
+    <div id="spheres" class="spheres"></div>
   </div>
-
   <div class="news">
     <h2>お知らせ</h2>
     <ul>
-      <li><a href="osirase\wdu2025.html">[最新版]プログラミング研究会活動について</a></li>
-        <li><a href="osirase\hackathon2025.html">2025年ハッカソン出場</a></li>
-        <li><a href="syoukai\pken.html">プログラミング研究会</a></li>
-        <li><a href="osirase\mahjong.html">[お知らせ]麻雀部門設立！</a></li>
-        <li><a href="osirase\binyouki.html">[お知らせ]2024年度前期 金曜日活動メンバー募集</a></li>
-        <li><a href="osirase\binyouki2.html">[お知らせ]2024年度前期 金曜日サークル活動開始</a></li>
-        <li><a href="osirase\hakkason.html">[お知らせ]2024年愛知県大学対抗ハッカソン出場決定</a></li>
-        <li><a href="osirase\hackaichi.html">[お知らせ]2024年愛知県大学対抗ハッカソン結果</a></li>
+      <li><a href="osirase/wdu2025.html">[最新版] プログラミング研究会活動について</a></li>
+      <li><a href="osirase/hackathon2025.html">2025年ハッカソン出場</a></li>
+      <li><a href="syoukai/pken.html">プログラミング研究会</a></li>
+      <li><a href="osirase/mahjong.html">[お知らせ] 麻雀部門設立！</a></li>
+      <li><a href="osirase/binyouki.html">[お知らせ] 2024年度前期 金曜日活動メンバー募集</a></li>
+      <li><a href="osirase/binyouki2.html">[お知らせ] 2024年度前期 金曜日サークル活動開始</a></li>
+      <li><a href="osirase/hakkason.html">[お知らせ] 2024年愛知県大学対抗ハッカソン出場決定</a></li>
+      <li><a href="osirase/hackaichi.html">[お知らせ] 2024年愛知県大学対抗ハッカソン結果</a></li>
     </ul>
   </div>
-
-  <script>
-    const sphereContainer = document.getElementById('spheres');
-    const count = 7;
-    const radius = Math.min(window.innerWidth, 400) / 2;
-    const spheres = [];
-
-    for (let i = 0; i < count; i++) {
-      const sphere = document.createElement('div');
-      sphere.className = 'sphere';
-      sphereContainer.appendChild(sphere);
-      spheres.push(sphere);
-    }
-
-    let angle = 0;
-    let rotX = 0, rotY = 0;
-
-    function animate() {
-      angle += 0.02;
-      rotX += 0.003;
-      rotY += 0.004;
-
-      const points = [];
-
-      for (let i = 0; i < count; i++) {
-        const theta = angle + i * (2 * Math.PI / count);
-        let x = radius * Math.cos(theta);
-        let y = radius * Math.sin(theta);
-        let z = 0;
-
-        let y1 = y * Math.cos(rotX) - z * Math.sin(rotX);
-        let z1 = y * Math.sin(rotX) + z * Math.cos(rotX);
-        y = y1; z = z1;
-
-        let x1 = x * Math.cos(rotY) + z * Math.sin(rotY);
-        z1 = -x * Math.sin(rotY) + z * Math.cos(rotY);
-        x = x1; z = z1;
-
-        points.push({ x, y, z });
-      }
-
-      for (let i = 0; i < count; i++) {
-        const p = points[i];
-        const scale = (p.z + 200) / 300;
-        const opacity = (p.z + 200) / 400;
-        spheres[i].style.transform = `
-          translate3d(${p.x + 150 - 8}px, ${p.y + 150 - 8}px, 0)
-          scale(${scale})
-        `;
-        spheres[i].style.opacity = opacity;
-        spheres[i].style.zIndex = Math.round(p.z);
-      }
-
-      requestAnimationFrame(animate);
-    }
-
-    animate();
-  </script>
-  <a href="game/pken_shooting.html" class="game-button">▶ P研シューティング</a>
+</div>
+<a href="game/pken_shooting.html" class="game-button">P研シューティング</a>
+<script>
+const sphereContainer=document.getElementById("spheres");
+const COUNT=14;
+let radius=Math.min(window.innerWidth,window.innerHeight)*0.35;
+const spheres=[];
+function createSpheres(){
+  sphereContainer.innerHTML="";
+  spheres.length=0;
+  for(let i=0;i<COUNT;i++){
+    const s=document.createElement("div");
+    s.className="sphere";
+    sphereContainer.appendChild(s);
+    spheres.push(s);
+  }
+}
+createSpheres();
+window.addEventListener('resize',()=>{radius=Math.min(window.innerWidth,window.innerHeight)*0.35;});
+let angle=0,rotX=0,rotY=0.002;
+function animate(){
+  angle+=0.016;rotX+=0.0025;rotY+=0.0035;
+  const points=[];
+  for(let i=0;i<COUNT;i++){
+    const theta=angle+(i*(Math.PI*2))/COUNT;
+    let x=radius*Math.cos(theta);
+    let y=radius*Math.sin(theta);
+    let z=0;
+    let y1=y*Math.cos(rotX)-z*Math.sin(rotX);
+    let z1=y*Math.sin(rotX)+z*Math.cos(rotX);
+    y=y1;z=z1;
+    const x1=x*Math.cos(rotY)+z*Math.sin(rotY);
+    z1=-x*Math.sin(rotY)+z*Math.cos(rotY);
+    x=x1;z=z1;
+    points.push({x,y,z});
+  }
+  for(let i=0;i<COUNT;i++){
+    const p=points[i];
+    const scale=(p.z+radius)/(radius*2)+0.4;
+    const opacity=(p.z+radius)/(radius*2)+0.2;
+    spheres[i].style.transform=`translate3d(${p.x+radius-11}px,${p.y+radius-11}px,0) scale(${scale})`;
+    spheres[i].style.opacity=opacity;
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
 </body>
 </html>
