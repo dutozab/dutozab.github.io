@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Pken Forest – 放置で森を育てよう</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg1:#0a0f1c;
+      --bg2:#101932;
+      --primary:#00ffcc;
+      --accent:#ff2fb0;
+      --text:#e8f7ff;
+      --danger:#ff4b5c;
+    }
+
+    * {box-sizing:border-box;}
+
+    html, body {
+      margin:0;
+      padding:0;
+      width:100%;
+      height:100%;
+      font-family:"Orbitron","Share Tech Mono",monospace;
+      /* 背景にグラデーションとロゴ画像を重ねる */
+      background:
+        linear-gradient(135deg, var(--bg1), var(--bg2)),
+        url("sozai/logo.png") no-repeat center top;
+      background-size: cover, 200px auto;
+      background-blend-mode: overlay;
+      color:var(--text);
+      overflow:hidden;
+      position:relative;
+      user-select:none;
+    }
+
+    h1{
+      text-align:center;
+      margin:1rem 0 0.5rem;
+      font-size:clamp(1.4rem,4vw,2.2rem);
+      text-shadow:0 0 8px var(--primary);
+    }
+
+    #game{
+      position: relative;
+      max-width:600px;
+      margin:2rem auto;
+      padding:1.5rem;
+      display:flex;
+      flex-direction:column;
+      gap:1.25rem;
+      border:2px solid var(--primary);
+      border-radius:1rem;
+      background:rgba(0,0,0,0.25);
+      box-shadow:0 0 20px rgba(0,255,204,0.25);
+      overflow:hidden;
+    }
+
+    .counter{
+      display:flex;
+      align-items:center;
+      gap:0.5rem;
+      font-size:clamp(1rem,3vw,1.4rem);
+    }
+
+    .counter img{
+      width:32px; height:32px;
+      filter:drop-shadow(0 0 4px var(--primary));
+    }
+
+    .btn{
+      display:flex;
+      align-items:center;
+      gap:0.5rem;
+      justify-content:center;
+      padding:0.6rem 1rem;
+      border:none;
+      border-radius:0.75rem;
+      background:var(--accent);
+      color:#fff;
+      font-size:clamp(0.9rem,2.8vw,1.1rem);
+      cursor:pointer;
+      transition:transform 0.1s ease,box-shadow 0.1s ease;
+      box-shadow:0 0 10px var(--accent),0 0 20px rgba(255,47,176,0.5);
+    }
+
+    .btn:active{transform:scale(0.95);}
+    .btn:disabled{
+      opacity:0.4;
+      box-shadow:none;
+      cursor:not-allowed;
+    }
+
+    .btn.danger{
+      background:var(--danger);
+      box-shadow:0 0 10px var(--danger),0 0 20px rgba(255,75,92,0.5);
+    }
+
+    .btn img{
+      width:24px;height:24px;
+    }
+
+    .section{
+      display:flex;
+      flex-direction:column;
+      gap:0.75rem;
+    }
+
+    .hint{text-align:center;font-size:0.85rem;color:#9cc8d6;opacity:0.8;}
+
+    /* 落ち葉エフェクト */
+    .leaf-fall {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      pointer-events: none;
+      animation: fall 3s linear forwards;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Pken Forest 🌲</h1>
+  <main id="game">
+    <div class="section" id="stats">
+      <div class="counter"><img src="sozai/leaf.png" alt="Leaf"> <span id="leaves">0</span> Leaves</div>
+      <div class="counter"><img src="sozai/tree.png" alt="Tree"> <span id="trees">0</span> Trees</div>
+      <div class="counter"><img src="sozai/fertilizer.png" alt="Fertilizer"> Fertilizer Lv.<span id="fertilizer">0</span></div>
+      <div class="counter">🍃 /sec: <span id="lps">0</span></div>
+    </div>
+
+    <div class="section" id="actions">
+      <button class="btn" id="btnClick"><img src="sozai/leaf.png" alt="Leaf"> Collect Leaf (+1)</button>
+      <button class="btn" id="btnTree"><img src="sozai/tree.png" alt="Tree"> Plant Tree (<span id="costTree">10</span> 🍃)</button>
+      <button class="btn" id="btnFertilizer"><img src="sozai/fertilizer.png" alt="Fertilizer"> Buy Fertilizer (<span id="costFert">100</span> 🍃)</button>
+      <button class="btn danger" id="btnReset">Reset Data</button>
+    </div>
+
+    <p class="hint">ゲームは自動で保存されます。タブを閉じても森は成長し続けます。</p>
+  </main>
+  <script>
+  (function(){
+    const ROUND = v => Math.floor(v);
+    const format = v => v.toLocaleString();
+
+    const state = { leaves:0, trees:0, fertilizer:0, last:Date.now() };
+    let effectAccum = 0;
+
+    const costTree = () => 10 * Math.pow(1.15, state.trees);
+    const costFert = () => 100 * Math.pow(2, state.fertilizer);
+
+    const load = () => {
+      const saved = localStorage.getItem('idleForestSave');
+      if(saved) try{ Object.assign(state, JSON.parse(saved)); }catch{};
+    };
+    const save = () => localStorage.setItem('idleForestSave', JSON.stringify(state));
+
+    const leavesPerSec = () => state.trees * (1 + 0.5 * state.fertilizer);
+
+    function updateUI(){
+      leavesEl.textContent = format(ROUND(state.leaves));
+      treesEl.textContent = state.trees;
+      fertEl.textContent = state.fertilizer;
+      lpsEl.textContent = format(leavesPerSec().toFixed(1));
+      costTreeEl.textContent = format(ROUND(costTree()));
+      costFertEl.textContent = format(ROUND(costFert()));
+      btnTree.disabled = state.leaves < costTree();
+      btnFertilizer.disabled = state.leaves < costFert();
+    }
+
+    function createLeafEffect(){
+      const leaf = document.createElement('img');
+      leaf.src = 'sozai/leaf.png';
+      leaf.className = 'leaf-fall';
+      leaf.style.left = `${Math.random()*(window.innerWidth-24)}px`;
+      leaf.style.top = '0px';
+      document.body.appendChild(leaf);
+      leaf.addEventListener('animationend', ()=>leaf.remove());
+    }
+
+    function tick(){
+      const now = Date.now();
+      const delta = (now-state.last)/1000;
+      state.last = now;
+      const auto = leavesPerSec()*delta;
+      state.leaves += auto;
+      effectAccum += auto;
+      const count = Math.floor(effectAccum);
+      for(let i=0;i<count;i++) createLeafEffect();
+      effectAccum -= count;
+      updateUI();
+    }
+
+    function buyTree(){ const c=costTree(); if(state.leaves>=c){ state.leaves-=c; state.trees++; updateUI(); }}
+    function buyFert(){ const c=costFert(); if(state.leaves>=c){ state.leaves-=c; state.fertilizer++; updateUI(); }}
+    function resetData(){
+      localStorage.removeItem('idleForestSave');
+      state.leaves=0; state.trees=0; state.fertilizer=0; state.last=Date.now(); effectAccum=0;
+      updateUI();
+    }
+
+    // DOM refs
+    const leavesEl      = document.getElementById('leaves');
+    const treesEl       = document.getElementById('trees');
+    const fertEl        = document.getElementById('fertilizer');
+    const lpsEl         = document.getElementById('lps');
+    const costTreeEl    = document.getElementById('costTree');
+    const costFertEl    = document.getElementById('costFert');
+    const btnClick      = document.getElementById('btnClick');
+    const btnTree       = document.getElementById('btnTree');
+    const btnFertilizer = document.getElementById('btnFertilizer');
+    const btnReset      = document.getElementById('btnReset');
+
+    // イベント
+    btnClick.addEventListener('click', ()=>{ state.leaves++; updateUI(); createLeafEffect(); });
+    btnTree.addEventListener('click', buyTree);
+    btnFertilizer.addEventListener('click', buyFert);
+    btnReset.addEventListener('click', ()=>{
+      if(confirm('本当にゲームデータをリセットしますか？ この操作は元に戻せません。')){
+        resetData();
+      }
+    });
+
+    load(); updateUI();
+    setInterval(tick,1000/30);
+    setInterval(save,10000);
+    window.addEventListener('beforeunload', save);
+  })();
+  </script>
+</body>
+</html>
