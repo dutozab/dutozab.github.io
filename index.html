@@ -126,10 +126,16 @@ body::after{
   border-bottom:1px solid #fff;
   text-shadow:0 0 8px #fff;
 }
-.game-button{
+/* Game buttons container */
+.game-buttons {
   position:fixed;
   bottom:clamp(20px,3vw,32px);
   right:clamp(20px,3vw,32px);
+  display:flex;
+  gap:8px;
+  z-index:10;
+}
+.game-button{
   display:flex;
   align-items:center;
   gap:8px;
@@ -137,19 +143,25 @@ body::after{
   color:#000;
   font-size:clamp(1rem,1vw+0.6rem,1.2rem);
   font-weight:bold;
-  padding:clamp(10px,1.2vw,14px) clamp(18px,2vw,24px);
+  padding:clamp(10px,1.2~,14px) clamp(18px,2vw,24px);
   border-radius:12px;
   box-shadow:0 0 20px var(--primary);
   transition:all 0.25s;
-  z-index:10;
 }
 .game-button::before{
   content:"▶";
   animation:pulse 1.6s infinite ease-in-out;
 }
-@keyframes pulse{
-  0%,100%{transform:translateX(0);}
-  50%{transform:translateX(5px);}
+/* 森のイメージボタン */
+.game-button.forest {
+  background: url("sozai/forest_button.png") center/cover no-repeat;
+  color: #fff;
+  text-shadow: 0 0 6px #000;
+  padding: clamp(10px,1.2vh,14px) clamp(18px,2vw,24px);
+}
+.game-button.forest::before {
+  content:"🌳";
+  animation:none;
 }
 .game-button:hover{
   transform:translateY(-2px) scale(1.03);
@@ -193,7 +205,11 @@ body::after{
     </ul>
   </div>
 </div>
-<a href="game/pken_shooting.html" class="game-button">P研シューティング</a>
+<!-- Game buttons container -->
+<div class="game-buttons">
+  <a href="game/pken_shooting.html" class="game-button">P研シューティング</a>
+  <a href="game/pken_forest.html" class="game-button forest">P研フォレスト</a>
+</div>
 <script>
 const sphereContainer=document.getElementById("spheres");
 const COUNT=14;
